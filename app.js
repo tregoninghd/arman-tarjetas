@@ -184,23 +184,39 @@
         grid.appendChild(thumb);
       });
     }
+   
     async function resizeImage(file, maxDim){
   let bitmap;
   try {
-    // 'from-image' le dice al navegador: respeta la rotación guardada en la foto
     bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
   } catch(e) {
-    // Si el navegador es muy viejo y no soporta esa opción, seguimos sin ella
     bitmap = await createImageBitmap(file);
   }
 
-  let w = bitmap.width, h = bitmap.height;
-  if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
-  else if(h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+  // Proporción fija para TODAS las fotos: 4:3 (horizontal, tipo fotografía estándar)
+  const targetRatio = 4 / 3;
+  const srcRatio = bitmap.width / bitmap.height;
 
+  let sx, sy, sw, sh;
+  if(srcRatio > targetRatio){
+    // la foto original es más ancha de lo necesario: recorta los lados
+    sh = bitmap.height;
+    sw = sh * targetRatio;
+    sx = (bitmap.width - sw) / 2;
+    sy = 0;
+  } else {
+    // la foto original es más alta de lo necesario: recorta arriba/abajo
+    sw = bitmap.width;
+    sh = sw / targetRatio;
+    sx = 0;
+    sy = (bitmap.height - sh) / 2;
+  }
+
+  const w = maxDim;
+  const h = Math.round(maxDim / targetRatio);
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
-  canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+  canvas.getContext('2d').drawImage(bitmap, sx, sy, sw, sh, 0, 0, w, h);
 
   const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
   const base64 = dataUrl.split(',')[1];
@@ -407,7 +423,7 @@
           const rowImgs = [photos[i], photos[i+1]].filter(Boolean);
           const runs = rowImgs.map(p => {
             const targetW = 260;
-            const targetH = Math.round(p.h * (targetW / p.w));
+            const targetH = 195;
             return new ImageRun({ data: p.bytes, type: 'jpg', transformation: { width: targetW, height: targetH } });
           });
           photoChildren.push(new Paragraph({ children: runs.flatMap((r,idx)=> idx>0 ? [new TextRun({text:'   '}), r] : [r]) }));
