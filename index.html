@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARMAN · Tarjeta Informativa</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="gate" id="gateScreen">
+  <h1>ARMAN SECURITY · TARJETAS INFORMATIVAS</h1>
+  <p>Ingresa el código de supervisor para crear una tarjeta informativa oficial.</p>
+  <input type="text" id="gateInput" placeholder="CÓDIGO DE ACCESO" autocomplete="off">
+  <div class="err" id="gateErr"></div>
+  <button id="gateBtn">Ingresar</button>
+</div>
+
+<div class="wrap" id="mainApp" style="display:none;">
+  <div class="brand">
+    <div class="brand-name"><b>ARMAN</b> · PRIVATE SECURITY</div>
+    <div class="brand-clock" id="clockNow">--:--</div>
+  </div>
+
+  <div class="ticket">
+    <div class="ticket-row">
+      <div>
+        <div class="ticket-label">Folio</div>
+        <div class="ticket-folio" id="folioDisplay">TI-000000-000</div>
+      </div>
+      <div class="status-chip baja" id="statusChip">SIN CLASIFICAR</div>
+    </div>
+    <div class="ticket-divider"></div>
+    <div class="ticket-meta">
+      <span>Colaborador: <b id="metaSupervisor">—</b></span>
+      <span>Turno: <b id="metaTurno">—</b></span>
+    </div>
+  </div>
+
+  <!-- 01 Datos generales -->
+  <div class="section">
+    <div class="section-eyebrow"><span class="num">1</span>DATOS GENERALES</div>
+    <div class="field">
+      <label>Nombre del colaborador redactor<span class="required-flag">*</span></label>
+      <input type="text" id="supervisor" placeholder="Nombre completo">
+    </div>
+    <div class="row2">
+      <div class="field"><label>Fecha</label><input type="date" id="fecha"></div>
+      <div class="field"><label>Hora</label><input type="time" id="hora"></div>
+    </div>
+    <div class="field"><label>Turno</label>
+      <select id="turno"><option value="Matutino">Matutino</option><option value="Vespertino">Vespertino</option><option value="Nocturno">Nocturno</option></select>
+    </div>
+    <div class="field">
+      <label>Residencial / cliente y unidad<span class="required-flag">*</span></label>
+      <input type="text" id="ubicacion" placeholder="Ej. Residencial Long Island, Kings R11">
+    </div>
+    <div class="field">
+      <label>Lugar específico del incidente<span class="required-flag">*</span></label>
+      <input type="text" id="lugarEspecifico" placeholder="Ej. Caseta de acceso, área común, unidad C-03">
+    </div>
+    <div class="field">
+      <label>Título breve del incidente<span class="required-flag">*</span></label>
+      <input type="text" id="tituloIncidente" placeholder="Ej. Disturbios y daños a condominio por propietario en estado de ebriedad">
+    </div>
+  </div>
+
+  <!-- 02 Clasificación -->
+  <div class="section">
+    <div class="section-eyebrow"><span class="num">2</span>CLASIFICACIÓN</div>
+    <div class="field">
+      <label>Tipo de incidente <span style="font-weight:400;color:#5a6472;">(elige todos los que apliquen)</span></label>
+      <div class="chips" id="tipoIncidenteChips"></div>
+    </div>
+    <div class="field">
+      <label>Nivel de urgencia</label>
+      <div class="chips" id="urgenciaChips"></div>
+    </div>
+  </div>
+
+  <!-- 03 Responsable -->
+  <div class="section">
+    <div class="section-eyebrow"><span class="num">3</span>RESPONSABLE DEL INCIDENTE</div>
+    <div class="field">
+      <label>¿Hay una persona responsable identificada?</label>
+      <div class="chips" id="hayResponsableChips"></div>
+    </div>
+    <div id="responsableFields">
+      <div class="field"><label>Nombre del responsable</label><input type="text" id="respNombre" placeholder="Nombre completo"></div>
+      <div class="field"><label>Identificación / unidad / domicilio</label><input type="text" id="respIdent" placeholder="Ej. Residente Kings R11, unidad C-03"></div>
+      <div class="field"><label>Placas del vehículo <span style="font-weight:400;color:#5a6472;">(si aplica)</span></label><input type="text" id="respPlacas" placeholder="Ej. ABC-1234"></div>
+    </div>
+  </div>
+
+  <!-- 04 Personas -->
+  <div class="section">
+    <div class="section-eyebrow"><span class="num">4</span>PERSONAS AFECTADAS E INVOLUCRADAS</div>
+    <div class="field">
+      <label>Persona(s) afectada(s)</label>
+      <input type="text" id="personasAfectadas" placeholder="Quiénes resultaron afectados">
+    </div>
+    <div class="field">
+      <label>Personas que tuvieron conocimiento o estuvieron involucradas</label>
+      <div class="list-block">
+        <div id="listaPersonas"></div>
+        <div class="empty-hint" id="personasEmptyHint">Aún no agregas a nadie</div>
+        <button type="button" class="add-row-btn" id="addPersonaBtn">+ Agregar persona</button>
+      </div>
+      <span class="hint">No olvides guardias, residentes, administradores y testigos. Esto es lo que más se queda fuera de las tarjetas.</span>
+    </div>
+  </div>
+
+  <!-- 05 Autoridades -->
+  <div class="section">
+    <div class="section-eyebrow"><span class="num">5</span>INTERVENCIÓN DE AUTORIDADES</div>
+    <div class="field">
+      <label>¿Hubo intervención policial o ambulancia?</label>
+      <div class="chips" id="hayAutoridadChips"></div>
+    </div>
+    <div id="autoridadFields">
+      <div class="row2">
+        <div class="field"><label>Corporación</label>
+          <select id="corporacion">
+            <option>Policía Municipal</option><option>Policía Estatal</option><option>Guardia Nacional</option>
+            <option>Cruz Roja</option><option>Bomberos</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="field"><label>Número de unidad / patrulla</label><input type="text" id="numUnidad" placeholder="Ej. STB J06"></div>
+      </div>
+      <div class="field">
+        <label>Oficiales / personal que atendió</label>
+        <div class="list-block">
+          <div id="listaOficiales"></div>
+          <div class="empty-hint" id="oficialesEmptyHint">Aún no agregas oficiales</div>
+          <button type="button" class="add-row-btn" id="addOficialBtn">+ Agregar oficial</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 Antecedentes y hechos -->
+  <div class="section">
+    <div class="section-eyebrow"><span class="num">6</span>ANTECEDENTES Y DESCRIPCIÓN</div>
+    <div class="field">
+      <label>Antecedentes previos <span style="font-weight:400;color:#5a6472;">(opcional)</span></label>
+      <textarea id="antecedentes" maxlength="500" placeholder="¿Este responsable, unidad o lugar ha tenido incidentes previos?"></textarea>
+      <div class="counter" id="countAntecedentes">0 / 500</div>
+    </div>
+    <div class="field">
+      <label>Descripción de los hechos<span class="required-flag">*</span></label>
+      <textarea id="hechos" maxlength="1800" placeholder="Qué pasó, hora exacta, quién dio parte, cómo se atendió y cómo se resolvió. Sé preciso, evita rodeos."></textarea>
+      <div class="counter" id="countHechos">0 / 1800</div>
+    </div>
+  </div>
+
+  <!-- 07 Evidencias -->
+  <div class="section">
+    <div class="section-eyebrow"><span class="num">7</span>EVIDENCIAS</div>
+    <div class="row3">
+      <div class="field"><label>Videos</label><div class="chips" id="evVideosChips"></div></div>
+      <div class="field"><label>Fotografías</label><div class="chips" id="evFotosChips"></div></div>
+      <div class="field"><label>Se informó a Admón./Cliente</label><div class="chips" id="evInformoChips"></div></div>
+    </div>
+    <div class="field">
+      <label>Adjuntar fotografías <span style="font-weight:400;color:#5a6472;">(máx. 6, se incluyen en el Word)</span></label>
+      <label class="photo-input-btn" for="photoInput">Tocar para tomar o subir fotos</label>
+      <input type="file" id="photoInput" accept="image/*" multiple style="display:none;">
+      <div class="photo-grid" id="photoGrid"></div>
+    </div>
+  </div>
+
+  <!-- 08 Acciones -->
+  <div class="section">
+    <div class="section-eyebrow"><span class="num">8</span>ACCIONES, DAÑOS Y SEGUIMIENTO</div>
+    <div class="field">
+      <label>Acciones tomadas</label>
+      <textarea id="acciones" maxlength="600" placeholder="Qué se hizo de inmediato. Un punto por línea."></textarea>
+      <div class="counter" id="countAcciones">0 / 600</div>
+    </div>
+    <div class="field">
+      <label>Valor aproximado de lo afectado</label>
+      <input type="text" id="valorAfectado" placeholder="Ej. No cuantificado / $2,500 MXN">
+    </div>
+    <div class="field">
+      <label>Medidas a tomar / seguimiento</label>
+      <textarea id="medidas" maxlength="500" placeholder="Qué debe continuar la oficina. Un punto por línea."></textarea>
+      <div class="counter" id="countMedidas">0 / 500</div>
+    </div>
+  </div>
+
+  <!-- 09 Checkbox de veracidad -->
+   <div class="section">
+    <div class="section-eyebrow"><span class="num">9</span>VERACIDAD DE LA INFORMACIÓN</div>
+    <div class="field checkbox-row">
+      <input type="checkbox" id="responsiva">
+      <label for="responsiva">Declaro que la información es verídica y comprobable.</label>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" id="btnGenerar">Generar tarjeta en Word</button>
+    <button class="btn-secondary" id="btnCompartir" style="display:none;">Compartir directamente</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Librería que genera el .docx real (NO EDITAR) -->
+<script src="docx.umd.js"></script>
+<!-- Logo de ARMAN en base64 (NO EDITAR, solo reemplazar si cambia el logo) -->
+<script src="logo-data.js"></script>
+<!-- Lógica del formulario: AQUÍ es donde se edita -->
+<script src="app.js"></script>
+</body>
+</html>
