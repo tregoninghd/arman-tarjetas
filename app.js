@@ -1,6 +1,6 @@
 (function(){
   const $ = id => document.getElementById(id);
-  const ACCESS_CODE = "ARMAN2026"; // <-- para cambiar el código, edita este valor
+  const ACCESS_CODE = "ARMAN2027"; // <-- para cambiar el código, edita este valor
 
   /* ---------- Gate ---------- */
   $('gateBtn').addEventListener('click', tryEnter);
@@ -184,32 +184,31 @@
         grid.appendChild(thumb);
       });
     }
-    function resizeImage(file, maxDim){
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        const reader = new FileReader();
-        reader.onload = () => {
-          img.onload = () => {
-            let w = img.width, h = img.height;
-            if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
-            else if(h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
-            const canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
-            const base64 = dataUrl.split(',')[1];
-            const bin = atob(base64);
-            const bytes = new Uint8Array(bin.length);
-            for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
-            resolve({ dataUrl, bytes, w, h });
-          };
-          img.onerror = reject;
-          img.src = reader.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
+    async function resizeImage(file, maxDim){
+  let bitmap;
+  try {
+    // 'from-image' le dice al navegador: respeta la rotación guardada en la foto
+    bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  } catch(e) {
+    // Si el navegador es muy viejo y no soporta esa opción, seguimos sin ella
+    bitmap = await createImageBitmap(file);
+  }
+
+  let w = bitmap.width, h = bitmap.height;
+  if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+  else if(h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+  const base64 = dataUrl.split(',')[1];
+  const bin = atob(base64);
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return { dataUrl, bytes, w, h };
+}
 
     /* ---------- Toast ---------- */
     function showToast(msg, isErr){
