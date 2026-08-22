@@ -1,6 +1,6 @@
 (function(){
   const $ = id => document.getElementById(id);
-  const ACCESS_CODE = "ARMAN2025"; // <-- para cambiar el código, edita este valor
+  const ACCESS_CODE = "ARMAN2027"; // <-- para cambiar el código, edita este valor
 
   /* ---------- Gate ---------- */
   $('gateBtn').addEventListener('click', tryEnter);
@@ -83,8 +83,8 @@
 
         // Chips de colaborador que llena el formato (edita esta lista con tu equipo real)
     const colaborador = buildSingleChips('colaboradorChips', [
-      'Luis Felipe Guerrero', 'Leonardo Conrrado', 'Héctor Tregoning', 'Dunet Manrique', 'Otro'
-    ], 'Luis Felipe Guerrero');
+      'Areli H. Ortiz', 'Leonardo Corrado González', 'Héctor B. Tregoning Bravo', 'Luis f. Guerrero Castro', 'Luis M. Machado Carrasco','Otro'
+    ], 'Luis F. Guerrero Castro');
     $('supervisor').value = colaborador.get();
     $('colaboradorChips').addEventListener('click', () => {
       $('supervisor').value = colaborador.get();
