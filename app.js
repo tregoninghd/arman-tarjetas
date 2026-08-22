@@ -355,13 +355,21 @@
           new TableCell({
             width: { size: 22, type: WidthType.PERCENTAGE },
             verticalAlign: VerticalAlign.CENTER,
-            children: [ new Paragraph({ children: [ new ImageRun({ data: logoBytes, type: 'png', transformation: { width: 70, height: 104 } }) ] }) ]
+            children: [ new Paragraph({ children: [ new ImageRun({ data: logoBytes, type: 'png', transformation: { width: 85, height: 126 } }) ] }) ]
           }),
+          
           new TableCell({
-            width: { size: 78, type: WidthType.PERCENTAGE },
+            width: { size: 56, type: WidthType.PERCENTAGE },
             verticalAlign: VerticalAlign.CENTER,
             children: [ new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: 'ARMAN SEGURIDAD PRIVADA S.A DE C.V', bold: true, size: 26 }) ] }) ]
           }),
+
+          new TableCell({
+          width: { size: 22, type: WidthType.PERCENTAGE },
+          children: [ new Paragraph({ children: [] }) ]
+          }),
+
+
         ] }) ]
       });
       const headerChildren = [
