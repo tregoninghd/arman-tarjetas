@@ -83,7 +83,7 @@
 
         // Chips de colaborador que llena el formato (edita esta lista con tu equipo real)
     const colaborador = buildSingleChips('colaboradorChips', [
-      'Areli H. Ortiz', 'Leonardo Corrado González', 'Héctor B. Tregoning Bravo', 'Luis f. Guerrero Castro', 'Luis M. Machado Carrasco','Otro'
+      'Areli H. Ortiz', 'Leonardo Corrado González', 'Héctor B. Tregoning Bravo', 'Luis F. Guerrero Castro', 'Luis M. Machado Carrasco','Otro'
     ], 'Luis F. Guerrero Castro');
     $('supervisor').value = colaborador.get();
     $('colaboradorChips').addEventListener('click', () => {
@@ -347,16 +347,29 @@
 
       // ---- Header (letterhead) ----
       const logoBytes = base64ToBytes(window.__LOGO_B64__);
+      const NOBORDER = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+      const headerTable = new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: { top:NOBORDER, bottom:NOBORDER, left:NOBORDER, right:NOBORDER, insideHorizontal:NOBORDER, insideVertical:NOBORDER },
+        rows: [ new TableRow({ children: [
+          new TableCell({
+            width: { size: 22, type: WidthType.PERCENTAGE },
+            verticalAlign: VerticalAlign.CENTER,
+            children: [ new Paragraph({ children: [ new ImageRun({ data: logoBytes, type: 'png', transformation: { width: 70, height: 104 } }) ] }) ]
+          }),
+          new TableCell({
+            width: { size: 78, type: WidthType.PERCENTAGE },
+            verticalAlign: VerticalAlign.CENTER,
+            children: [ new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: 'ARMAN SEGURIDAD PRIVADA S.A DE C.V', bold: true, size: 26 }) ] }) ]
+          }),
+        ] }) ]
+      });
       const headerChildren = [
+        headerTable,
         new Paragraph({
-          children: [
-            new ImageRun({ data: logoBytes, type: 'png', transformation: { width: 46, height: 68 } }),
-          ],
-        }),
-        new Paragraph({
-          spacing: { before: 40, after: 80 },
-          children: [ new TextRun({ text: 'ARMAN SEGURIDAD PRIVADA S.A DE C.V', bold: true, size: 22 }) ],
-          border: { bottom: { color: GOLD, space: 4, style: BorderStyle.SINGLE, size: 16 } }
+          spacing: { before: 60 },
+          border: { bottom: { color: GOLD, space: 4, style: BorderStyle.SINGLE, size: 16 } },
+          children: []
         }),
       ];
 
