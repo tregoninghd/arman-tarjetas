@@ -80,6 +80,17 @@
 
     const urgencia = buildSingleChips('urgenciaChips', ['Baja','Media','Alta','Crítica'], 'Baja',
       opt => opt==='Alta' ? 'high' : (opt==='Crítica' ? 'crit' : ''));
+
+        // Chips de colaborador que llena el formato (edita esta lista con tu equipo real)
+    const colaborador = buildSingleChips('colaboradorChips', [
+      'Luis Felipe Guerrero', 'Leonardo Conrrado', 'Héctor Tregoning', 'Dunet Manrique', 'Otro'
+    ], 'Luis Felipe Guerrero');
+    $('supervisor').value = colaborador.get();
+    $('colaboradorChips').addEventListener('click', () => {
+      $('supervisor').value = colaborador.get();
+      refreshTicket();
+    });
+
     const tipoIncidente = buildMultiChips('tipoIncidenteChips', [
       'Disturbios / agresión','Daños a infraestructura','Incidente vial',
       'Bajo efectos de alcohol o sustancias','Robo o hurto','Emergencia médica',
