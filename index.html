@@ -195,12 +195,17 @@
       <div class="field"><label>Testimonios</label><div class="chips" id="evInformoChips"></div></div>
     </div>
     <div class="field">
-      <label>Adjuntar fotografías <span style="font-weight:400;color:#5a6472;">(máx. 6, se incluyen en el Word)</span></label>
-      <label class="photo-input-btn" for="photoInput">Tocar para tomar o subir fotos</label>
-      <input type="file" id="photoInput" accept="image/*" multiple style="display:none;">
-      <div class="photo-grid" id="photoGrid"></div>
+        <label>Fotografías con su descripción <span style="font-weight:400;color:#5a6472;">(se incrustan en el Word, cada una con su pie de foto)</span></label>
+        <div class="list-block">
+          <div id="listaFotos"></div>
+          <div class="empty-hint" id="fotosEmptyHint">Aún no agregas fotografías</div>
+          <button type="button" class="add-row-btn" id="addFotoBtn">+ Agregar fotografía</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Otros archivos compartidos por separado <span style="font-weight:400;color:#5a6472;">(videos, notas de voz — no se incluyen en el Word)</span></label>
+        <input type="text" id="evidenciasDetalle" placeholder="Ej. video_caseta.mp4, nota_voz_testigo.mp3">
     </div>
-  </div>
 
   <!-- 08 Acciones -->
   <div class="section">

@@ -92,6 +92,9 @@
   .list-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;}
   .list-row:last-child{margin-bottom:0;}
   .list-row input{font-size:13.5px;padding:9px 10px;}
+  .list-row-photo{display:grid;grid-template-columns:auto 1fr auto;gap:8px;margin-bottom:8px;align-items:center;}
+  .list-row-photo input[type="file"]{font-size:11px;color:var(--text-muted);width:110px;}
+  .list-row-photo input[type="text"]{font-size:13.5px;padding:9px 10px;}
   .row-del{background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:15px;line-height:1;}
   .add-row-btn{width:100%;background:transparent;border:1px dashed var(--border);color:var(--accent);border-radius:10px;padding:10px;font-family:var(--font-mono);font-size:12px;cursor:pointer;margin-top:2px;}
   .empty-hint{color:#5a6472;font-size:12px;text-align:center;padding:6px 0;}

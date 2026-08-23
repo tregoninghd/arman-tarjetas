@@ -172,70 +172,69 @@
     const oficialesList = makeListManager('listaOficiales','oficialesEmptyHint','addOficialBtn',['Nombre del oficial','Cargo / corporación']);
 
     /* ---------- Photos ---------- */
-    const MAX_PHOTOS = 6;
-    let photos = []; // {dataUrl, bytes(Uint8Array), w, h}
-    $('photoInput').addEventListener('change', async (e) => {
-      const files = [...e.target.files].slice(0, MAX_PHOTOS - photos.length);
-      for(const file of files){
-        const resized = await resizeImage(file, 900);
-        photos.push(resized);
-        renderPhotoGrid();
-      }
-      e.target.value = '';
-    });
-    function renderPhotoGrid(){
-      const grid = $('photoGrid');
-      grid.innerHTML = '';
-      photos.forEach((p, idx) => {
-        const thumb = document.createElement('div'); thumb.className = 'photo-thumb';
-        const img = document.createElement('img'); img.src = p.dataUrl;
-        const rm = document.createElement('button'); rm.className = 'rm'; rm.textContent = '×';
-        rm.addEventListener('click', () => { photos.splice(idx,1); renderPhotoGrid(); });
-        thumb.appendChild(img); thumb.appendChild(rm);
-        grid.appendChild(thumb);
-      });
-    }
-   
-    async function resizeImage(file, maxDim){
+ /* ---------- Fotos con pie de foto (lista dinámica) ---------- */
+async function resizeImageFixedHeight(file, targetHeight){
   let bitmap;
   try {
     bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
   } catch(e) {
     bitmap = await createImageBitmap(file);
   }
-
-  // Proporción fija para TODAS las fotos: 4:3 (horizontal, tipo fotografía estándar)
-  const targetRatio = 4 / 3;
-  const srcRatio = bitmap.width / bitmap.height;
-
-  let sx, sy, sw, sh;
-  if(srcRatio > targetRatio){
-    // la foto original es más ancha de lo necesario: recorta los lados
-    sh = bitmap.height;
-    sw = sh * targetRatio;
-    sx = (bitmap.width - sw) / 2;
-    sy = 0;
-  } else {
-    // la foto original es más alta de lo necesario: recorta arriba/abajo
-    sw = bitmap.width;
-    sh = sw / targetRatio;
-    sx = 0;
-    sy = (bitmap.height - sh) / 2;
-  }
-
-  const w = maxDim;
-  const h = Math.round(maxDim / targetRatio);
+  // Sin recorte: se conserva toda la foto, solo se ajusta la altura
+  const scale = targetHeight / bitmap.height;
+  const w = Math.round(bitmap.width * scale);
+  const h = targetHeight;
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
-  canvas.getContext('2d').drawImage(bitmap, sx, sy, sw, sh, 0, 0, w, h);
-
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
   const base64 = dataUrl.split(',')[1];
   const bin = atob(base64);
   const bytes = new Uint8Array(bin.length);
   for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
   return { dataUrl, bytes, w, h };
 }
+
+function makePhotoListManager(containerId, emptyHintId, addBtnId){
+  const container = $(containerId), emptyHint = $(emptyHintId), addBtn = $(addBtnId);
+  const rows = [];
+  function render(){ emptyHint.style.display = rows.length ? 'none' : 'block'; }
+  function addRow(){
+    const rowEl = document.createElement('div');
+    rowEl.className = 'list-row-photo';
+    const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/*';
+    const captionInput = document.createElement('input'); captionInput.type = 'text'; captionInput.placeholder = 'Nombre o descripción de la foto';
+    const del = document.createElement('button'); del.type = 'button'; del.className = 'row-del'; del.textContent = '×';
+
+    const entry = { bytes: null, w: 0, h: 0, get caption(){ return captionInput.value.trim(); } };
+
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files[0];
+      if(!file) return;
+      const resized = await resizeImageFixedHeight(file, 700);
+      entry.bytes = resized.bytes;
+      entry.w = resized.w;
+      entry.h = resized.h;
+    });
+    del.addEventListener('click', () => {
+      rowEl.remove();
+      const idx = rows.indexOf(entry);
+      if(idx > -1) rows.splice(idx, 1);
+      render();
+    });
+
+    rowEl.appendChild(fileInput);
+    rowEl.appendChild(captionInput);
+    rowEl.appendChild(del);
+    container.appendChild(rowEl);
+    rows.push(entry);
+    render();
+  }
+  addBtn.addEventListener('click', addRow);
+  addRow();
+  return { getAll: () => rows.filter(r => r.bytes) };
+}
+const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFotoBtn');
 
     /* ---------- Toast ---------- */
     function showToast(msg, isErr){
