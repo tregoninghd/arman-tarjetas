@@ -83,7 +83,7 @@
 
         // Chips de colaborador que llena el formato (edita esta lista con tu equipo real)
     const colaborador = buildSingleChips('colaboradorChips', [
-      'Areli H. Ortiz', 'Leonardo Corrado González', 'Héctor B. Tregoning Bravo', 'Luis F. Guerrero Castro', 'Luis M. Machado Carrasco','Otro'
+      'Areli H. Ortiz', 'Leonardo Corrado González', 'Héctor B. Tregoning Bravo', 'Luis F. Guerrero Castro', 'Luis M. Machado Carrasco','Oficial de protección en turno'
     ], 'Luis F. Guerrero Castro');
     $('supervisor').value = colaborador.get();
     $('colaboradorChips').addEventListener('click', () => {
