@@ -57,7 +57,7 @@
       <select id="turno"><option value="Matutino">Matutino</option><option value="Vespertino">Vespertino</option><option value="Nocturno">Nocturno</option></select>
     </div>
     <div class="field">
-      <label>Residencial / cliente y unidad<span class="required-flag">*</span></label>
+      <label>Residencial / instalación / cliente o unidad privativa<span class="required-flag">*</span></label>
       <input type="text" list="servicioslista" id="ubicacion" placeholder="Ej. Residencial Long Island, Kings R11">
       <datalist id="servicioslista">
         <option value="Antaal">
@@ -80,6 +80,7 @@
         <option value="Teya">
         <option value="Torre Metropoli">
         <option value="Tu Depa">
+        <option value="Oficina ARMAN ">  
         <option value="Urbalam">
         <option value="Villalta">
         <option value="Villa Magna">
@@ -138,7 +139,7 @@
         <div class="empty-hint" id="personasEmptyHint">Aún no agregas a nadie</div>
         <button type="button" class="add-row-btn" id="addPersonaBtn">+ Agregar persona</button>
       </div>
-      <span class="hint">No olvides guardias, residentes, administradores y testigos. Esto es lo que más se queda fuera de las tarjetas.</span>
+      <span class="hint">No olvides guardias, residentes, administradores o testigos.</span>
     </div>
   </div>
 
@@ -146,18 +147,18 @@
   <div class="section">
     <div class="section-eyebrow"><span class="num">5</span>INTERVENCIÓN DE AUTORIDADES</div>
     <div class="field">
-      <label>¿Hubo intervención policial o ambulancia?</label>
+      <label>¿Hubo intervención policial y autoridades/Ambulancia y servicios de emergencia?</label>
       <div class="chips" id="hayAutoridadChips"></div>
     </div>
     <div id="autoridadFields">
       <div class="row2">
         <div class="field"><label>Corporación</label>
           <select id="corporacion">
-            <option>Policía Municipal</option><option>Policía Estatal</option><option>Guardia Nacional</option>
-            <option>Cruz Roja</option><option>Bomberos</option><option>Otro</option>
+            <option>Policía Municipal</option><option>Policía Estatal</option><option>Guardia Nacional</option><option>Ejercito o Marina</option><option>Personal de la Fiscalia</option><option>Policia de Investigaciones</option><option>Personal de Juzgados</option>
+            <option>Cruz Roja</option><option>Bomberos</option><option>Emergencias Médicas</option><option>Servicios Forenses</option><option>Personal de Rescate</option><option>Otro</option>
           </select>
         </div>
-        <div class="field"><label>Número de unidad / patrulla</label><input type="text" id="numUnidad" placeholder="Ej. STB J06"></div>
+        <div class="field"><label>Número de unidad / placas</label><input type="text" id="numUnidad" placeholder="Ej. STB J06"></div>
       </div>
       <div class="field">
         <label>Oficiales / personal que atendió</label>
@@ -180,7 +181,7 @@
     </div>
     <div class="field">
       <label>Descripción de los hechos<span class="required-flag">*</span></label>
-      <textarea id="hechos" maxlength="1800" placeholder="Qué pasó, hora exacta, quién dio parte, cómo se atendió y cómo se resolvió. Sé preciso, evita rodeos."></textarea>
+      <textarea id="hechos" maxlength="1800" placeholder="Responde a las siguientes preguntas:QUÉ pasó, FECHA Y HORA exacta del hecho, DÓNDE se dieron los hechos, QUIÉN dio parte, CÓMO se identificó y cómo se atendió? Sé preciso, evita rodeos."></textarea>
       <div class="counter" id="countHechos">0 / 1800</div>
     </div>
   </div>
@@ -191,7 +192,7 @@
     <div class="row3">
       <div class="field"><label>Videos</label><div class="chips" id="evVideosChips"></div></div>
       <div class="field"><label>Fotografías</label><div class="chips" id="evFotosChips"></div></div>
-      <div class="field"><label>Se informó a Admón./Cliente</label><div class="chips" id="evInformoChips"></div></div>
+      <div class="field"><label>Testimonios</label><div class="chips" id="evInformoChips"></div></div>
     </div>
     <div class="field">
       <label>Adjuntar fotografías <span style="font-weight:400;color:#5a6472;">(máx. 6, se incluyen en el Word)</span></label>
@@ -210,12 +211,12 @@
       <div class="counter" id="countAcciones">0 / 600</div>
     </div>
     <div class="field">
-      <label>Valor aproximado de lo afectado</label>
-      <input type="text" id="valorAfectado" placeholder="Ej. No cuantificado / $2,500 MXN">
+      <label>Valor aproximado de la afectación o daño</label>
+      <input type="text" id="valorAfectado" placeholder="Ej. Aún no cuantificado / $2,500 MXN">
     </div>
     <div class="field">
-      <label>Medidas a tomar / seguimiento</label>
-      <textarea id="medidas" maxlength="500" placeholder="Qué debe continuar la oficina. Un punto por línea."></textarea>
+      <label>Recomendaciones y medidas a tomar</label>
+      <textarea id="medidas" maxlength="500" placeholder="Recomendaciones preliminares para el cliente y los afectados."></textarea>
       <div class="counter" id="countMedidas">0 / 500</div>
     </div>
   </div>

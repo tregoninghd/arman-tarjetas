@@ -1,6 +1,6 @@
 (function(){
   const $ = id => document.getElementById(id);
-  const ACCESS_CODE = "ARMAN2027"; // <-- para cambiar el código, edita este valor
+  const ACCESS_CODE = "1"; // <-- para cambiar el código, edita este valor
 
   /* ---------- Gate ---------- */
   $('gateBtn').addEventListener('click', tryEnter);
@@ -92,9 +92,9 @@
     });
 
     const tipoIncidente = buildMultiChips('tipoIncidenteChips', [
-      'Disturbios / agresión','Daños a infraestructura','Incidente vial',
-      'Bajo efectos de alcohol o sustancias','Robo o hurto','Emergencia médica',
-      'Falla o incumplimiento de personal','Queja de cliente','Reconocimiento positivo','Otro'
+      'Disturbios','Agresión','Acoso','Daños a infraestructura','Incidente vial',
+      'Relacionados con el de alcohol o sustancias','Robo o hurto','Emergencia médica',
+      'Falla o incumplimiento de personal','Queja de cliente','Reconocimiento positivo','Riesgo','Amenazas','Vandalismo','Conflicto','Vulnerabilidad', 'Malfuncionamiento de equipos','Intrusión','Otro'
     ]);
     const hayResponsable = buildSingleChips('hayResponsableChips', ['Sí','No'], 'No', opt => opt==='Sí' ? 'ok' : '');
     const hayAutoridad = buildSingleChips('hayAutoridadChips', ['Sí','No'], 'No', opt => opt==='Sí' ? 'ok' : '');
