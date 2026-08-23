@@ -465,7 +465,7 @@
       // ---- Footer meta ----
       const closing = [
         new Paragraph({ spacing:{before:300}, children:[ new TextRun({ text: 'Folio: ' + folio + '   ·   Generado: ' + now.toLocaleString('es-MX'), size:16, color:'666666' }) ] }),
-        new Paragraph({ spacing:{before:200}, children:[ new TextRun({ text: 'Firma del supervisor: ' + ($('supervisor').value.trim() || '—'), size:19 }) ] }),
+        new Paragraph({ spacing:{before:200}, children:[ new TextRun({ text: 'Responsable que elabora Tarjeta Informativa: ' + ($('supervisor').value.trim() || '—'), size:19 }) ] }),
         new Paragraph({ spacing:{before:400}, children:[ new TextRun({ text: '_______________________________________', size:19 }) ] }),
       ];
 
