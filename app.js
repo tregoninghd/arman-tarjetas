@@ -33,7 +33,7 @@
 
     /* Folio */
     function pad(n,l){ return String(n).padStart(l,'0'); }
-    const folioDate = now.getFullYear().toString().slice(2) + pad(now.getMonth()+1,2) + pad(now.getDate(),2);
+    const folioDate = pad(now.getDate(),2) + pad(now.getMonth()+1,2) + now.getFullYear().toString().slice(2);
     const folio = 'TI-' + folioDate + '-' + pad(Math.floor(Math.random()*900+100),3);
     $('folioDisplay').textContent = folio;
 
@@ -572,10 +572,11 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
         });
       }
       // ---- Footer meta ----
+      const selloBytes = base64ToBytes(window.__SELLO_B64__);
       const closing = [
         new Paragraph({ spacing:{before:300}, children:[ new TextRun({ text: 'Folio: ' + folio + '   ·   Generado: ' + now.toLocaleString('es-MX'), size:16, color:'666666' }) ] }),
         new Paragraph({ spacing:{before:200}, children:[ new TextRun({ text: 'Responsable que elabora Tarjeta Informativa: ' + ($('supervisor').value.trim() || '—'), size:19 }) ] }),
-        new Paragraph({ spacing:{before:400}, children:[ new TextRun({ text: '_______________________________________', size:19 }) ] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing:{before:350}, children:[ new ImageRun({ data: selloBytes, type:'png', transformation:{ width: 200, height: 100 } }) ] }),
       ];
 
       const doc = new Document({
