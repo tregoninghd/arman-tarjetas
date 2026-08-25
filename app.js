@@ -169,9 +169,93 @@
       return { getAll: () => rows.filter(r => r.a || r.b).map(r => ({a:r.a,b:r.b})) };
     }
     const personasList = makeListManager('listaPersonas','personasEmptyHint','addPersonaBtn',['Nombre','Rol / cargo']);
-    const oficialesList = makeListManager('listaOficiales','oficialesEmptyHint','addOficialBtn',['Nombre del oficial','Cargo / corporación']);
+function makeAuthorityListManager(containerId, emptyHintId, addBtnId, corporaciones){
+  const container = $(containerId), emptyHint = $(emptyHintId), addBtn = $(addBtnId);
+  const authorities = [];
+  function render(){ emptyHint.style.display = authorities.length ? 'none' : 'block'; }
 
-    /* ---------- Photos ---------- */
+  function addAuthority(){
+    const card = document.createElement('div');
+    card.className = 'list-block';
+    card.style.marginBottom = '10px';
+
+    const headerRow = document.createElement('div');
+    headerRow.className = 'list-row authority-header-row';
+    const select = document.createElement('select');
+    corporaciones.forEach(c => {
+      const opt = document.createElement('option'); opt.value = c; opt.textContent = c;
+      select.appendChild(opt);
+    });
+    const unidadInput = document.createElement('input'); unidadInput.type = 'text'; unidadInput.placeholder = 'Número de unidad / placas';
+    const delCard = document.createElement('button'); delCard.type = 'button'; delCard.className = 'row-del'; delCard.textContent = '×';
+    headerRow.appendChild(select); headerRow.appendChild(unidadInput); headerRow.appendChild(delCard);
+
+    const divider = document.createElement('div');
+    divider.style.cssText = 'border-top:1px dashed var(--border);margin:10px 0;';
+
+    const officersContainer = document.createElement('div');
+    const officers = [];
+    const officersEmptyHint = document.createElement('div');
+    officersEmptyHint.className = 'empty-hint';
+    officersEmptyHint.textContent = 'Sin elementos agregados';
+    const addOfficerBtn = document.createElement('button');
+    addOfficerBtn.type = 'button'; addOfficerBtn.className = 'add-row-btn';
+    addOfficerBtn.textContent = '+ Agregar elemento de esta corporación';
+
+    function renderOfficers(){ officersEmptyHint.style.display = officers.length ? 'none' : 'block'; }
+    function addOfficerRow(){
+      const row = document.createElement('div');
+      row.className = 'list-row';
+      const nameInput = document.createElement('input'); nameInput.type = 'text'; nameInput.placeholder = 'Nombre del elemento';
+      const cargoInput = document.createElement('input'); cargoInput.type = 'text'; cargoInput.placeholder = 'Cargo';
+      const delOfficer = document.createElement('button'); delOfficer.type = 'button'; delOfficer.className = 'row-del'; delOfficer.textContent = '×';
+      const officerEntry = { get nombre(){ return nameInput.value.trim(); }, get cargo(){ return cargoInput.value.trim(); } };
+      delOfficer.addEventListener('click', () => {
+        row.remove();
+        const idx = officers.indexOf(officerEntry);
+        if(idx > -1) officers.splice(idx, 1);
+        renderOfficers();
+      });
+      row.appendChild(nameInput); row.appendChild(cargoInput); row.appendChild(delOfficer);
+      officersContainer.insertBefore(row, officersEmptyHint);
+      officers.push(officerEntry);
+      renderOfficers();
+    }
+    addOfficerBtn.addEventListener('click', addOfficerRow);
+    officersContainer.appendChild(officersEmptyHint);
+    officersContainer.appendChild(addOfficerBtn);
+
+    card.appendChild(headerRow);
+    card.appendChild(divider);
+    card.appendChild(officersContainer);
+    container.appendChild(card);
+
+    const authorityEntry = {
+      get corporacion(){ return select.value; },
+      get unidad(){ return unidadInput.value.trim(); },
+      get officers(){ return officers.filter(o => o.nombre); }
+    };
+    delCard.addEventListener('click', () => {
+      card.remove();
+      const idx = authorities.indexOf(authorityEntry);
+      if(idx > -1) authorities.splice(idx, 1);
+      render();
+    });
+
+    authorities.push(authorityEntry);
+    render();
+    addOfficerRow();
+  }
+  addBtn.addEventListener('click', addAuthority);
+  addAuthority();
+  return { getAll: () => authorities.filter(a => a.unidad || a.officers.length) };
+}
+const autoridadesList = makeAuthorityListManager('listaAutoridades', 'autoridadesEmptyHint', 'addAutoridadBtn', [
+  'Policía Municipal','Policía Estatal','Guardia Nacional','Ejército o Marina','Personal de la Fiscalía',
+  'Policía de Investigaciones','Personal de Juzgados','Cruz Roja','Bomberos','Emergencias Médicas',
+  'Servicios Forenses','Personal de Rescate','Otro'
+]);
+
  /* ---------- Fotos con pie de foto (lista dinámica) ---------- */
 async function resizeImageFixedHeight(file, targetHeight){
   let bitmap;
@@ -203,6 +287,7 @@ function makePhotoListManager(containerId, emptyHintId, addBtnId){
     const rowEl = document.createElement('div');
     rowEl.className = 'list-row-photo';
     const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/*';
+    const status = document.createElement('span'); status.className = 'photo-status'; status.textContent = '○';
     const captionInput = document.createElement('input'); captionInput.type = 'text'; captionInput.placeholder = 'Nombre o descripción de la foto';
     const del = document.createElement('button'); del.type = 'button'; del.className = 'row-del'; del.textContent = '×';
 
@@ -211,10 +296,13 @@ function makePhotoListManager(containerId, emptyHintId, addBtnId){
     fileInput.addEventListener('change', async () => {
       const file = fileInput.files[0];
       if(!file) return;
+      status.textContent = '…';
       const resized = await resizeImageFixedHeight(file, 700);
       entry.bytes = resized.bytes;
       entry.w = resized.w;
       entry.h = resized.h;
+      status.textContent = '✓';
+      status.classList.add('ok');
     });
     del.addEventListener('click', () => {
       rowEl.remove();
@@ -224,6 +312,7 @@ function makePhotoListManager(containerId, emptyHintId, addBtnId){
     });
 
     rowEl.appendChild(fileInput);
+    rowEl.appendChild(status);
     rowEl.appendChild(captionInput);
     rowEl.appendChild(del);
     container.appendChild(rowEl);
@@ -343,6 +432,24 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
           : textParas('—');
         return new TableRow({ children: [ labelCell(label), valueCell(paras) ] });
       }
+      function authoritiesRow(label, authorities){
+        let paras = [];
+        if(authorities.length){
+          authorities.forEach(a => {
+            paras.push(new Paragraph({ spacing:{before:60}, children:[ new TextRun({ text: a.corporacion + ' — Unidad/Placas: ' + (a.unidad || '—'), bold:true, size:20 }) ] }));
+            if(a.officers.length){
+              a.officers.forEach(o => {
+                paras.push(new Paragraph({ bullet:{level:0}, spacing:{after:40}, children:[ new TextRun({ text: o.nombre + (o.cargo ? ' — ' + o.cargo : ''), size:20 }) ] }));
+              });
+            } else {
+              paras.push(new Paragraph({ bullet:{level:0}, spacing:{after:40}, children:[ new TextRun({ text: 'Sin elementos registrados', italics:true, size:20 }) ] }));
+            }
+          });
+        } else {
+          paras = textParas('—');
+        }
+        return new TableRow({ children: [ labelCell(label), valueCell(paras) ] });
+      }
 
       // ---- Header (letterhead) ----
       const logoBytes = base64ToBytes(window.__LOGO_B64__);
@@ -374,8 +481,9 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
       const headerChildren = [
         headerTable,
         new Paragraph({
-          spacing: { before: 60 },
-          border: { bottom: { color: GOLD, space: 4, style: BorderStyle.SINGLE, size: 16 } },
+          spacing: { before: 10 },
+          border: { bottom: { color: GOLD, space: 4, style: BorderStyle.SINGLE, size: 18 } },
+          spacing: { after: 220 },
           children: []
         }),
       ];
@@ -397,18 +505,19 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
       ];
 
       // ---- Title table ----
+      const nowIsoLocal = now.getFullYear() + '-' + pad(now.getMonth()+1,2) + '-' + pad(now.getDate(),2);
       const titleTable = new Table({
         width: { size: 100, type: WidthType.PERCENTAGE },
         rows: [
           new TableRow({ children: [
-            labelCell('LUGAR'),
-            new TableCell({ width:{size:48,type:WidthType.PERCENTAGE}, shading:{fill:GRAY_BG}, verticalAlign:VerticalAlign.CENTER, margins:{top:100,bottom:100,left:120,right:120}, children:[ new Paragraph({ alignment: AlignmentType.CENTER, children:[ new TextRun({text:'TARJETA INFORMATIVA', bold:true, size:21}) ] }) ] }),
-            labelCell('FECHA'),
+            new TableCell({ width:{size:40,type:WidthType.PERCENTAGE}, shading:{fill:GRAY_BG}, verticalAlign:VerticalAlign.CENTER, margins:{top:100,bottom:100,left:120,right:120}, children:[ new Paragraph({ children:[ new TextRun({text:'TÍTULO', bold:true, size:19}) ] }) ] }),
+            new TableCell({ width:{size:36,type:WidthType.PERCENTAGE}, shading:{fill:GRAY_BG}, verticalAlign:VerticalAlign.CENTER, margins:{top:100,bottom:100,left:120,right:120}, children:[ new Paragraph({ children:[ new TextRun({text:'LUGAR', bold:true, size:19}) ] }) ] }),
+            new TableCell({ width:{size:24,type:WidthType.PERCENTAGE}, shading:{fill:GRAY_BG}, verticalAlign:VerticalAlign.CENTER, margins:{top:100,bottom:100,left:120,right:120}, children:[ new Paragraph({ children:[ new TextRun({text:'FECHA DE REGISTRO', bold:true, size:19}) ] }) ] }),
           ]}),
           new TableRow({ children: [
-            valueCell([ new Paragraph({ children:[ new TextRun({ text: $('ubicacion').value.trim() + (' — ' + $('lugarEspecifico').value.trim()), bold:true, size:19 }) ] }) ]),
-            new TableCell({ width:{size:48,type:WidthType.PERCENTAGE}, verticalAlign:VerticalAlign.CENTER, margins:{top:100,bottom:100,left:120,right:120}, children:[ new Paragraph({ alignment: AlignmentType.CENTER, children:[ new TextRun({ text: $('tituloIncidente').value.trim(), bold:true, size:19 }) ] }) ] }),
-            valueCell([ new Paragraph({ children:[ new TextRun({ text: formatFechaLarga($('fecha').value), size:19 }) ] }) ]),
+            new TableCell({ width:{size:40,type:WidthType.PERCENTAGE}, verticalAlign:VerticalAlign.CENTER, margins:{top:100,bottom:100,left:120,right:120}, children:[ new Paragraph({ children:[ new TextRun({ text: $('tituloIncidente').value.trim() + ' (' + folio + ')', bold:true, size:19 }) ] }) ] }),
+            new TableCell({ width:{size:36,type:WidthType.PERCENTAGE}, verticalAlign:VerticalAlign.CENTER, margins:{top:100,bottom:100,left:120,right:120}, children:[ new Paragraph({ children:[ new TextRun({ text: $('ubicacion').value.trim() + (' — ' + $('lugarEspecifico').value.trim()), bold:true, size:19 }) ] }) ] }),
+            new TableCell({ width:{size:24,type:WidthType.PERCENTAGE}, verticalAlign:VerticalAlign.CENTER, margins:{top:100,bottom:100,left:120,right:120}, children:[ new Paragraph({ children:[ new TextRun({ text: formatFechaLarga(nowIsoLocal), size:19 }) ] }) ] }),
           ]})
         ]
       });
@@ -422,17 +531,15 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
       const autoridadTxt = hayAutoridad.get()==='Sí' ? 'Sí' : 'No';
 
       const bodyRows = [
-        labelRow('Fecha y hora', fechaHoraTxt),
+        labelRow('Fecha y hora del incidente', fechaHoraTxt),
         labelRow('Lugar del incidente', $('lugarEspecifico').value.trim()),
         labelRow('Persona(s) afectada(s)', $('personasAfectadas').value.trim()),
         peopleRow('Personas que tuvieron conocimiento y/o estuvieron involucradas', personasList.getAll()),
         labelRow('Responsable del incidente', respTxt),
-        labelRow('Intervención policial o ambulancia', autoridadTxt + (hayAutoridad.get()==='Sí'
-          ? '\nCorporación: ' + $('corporacion').value + '\nUnidad/Patrulla: ' + ($('numUnidad').value.trim() || '—')
-          : '')),
+        labelRow('Intervención policial o ambulancia', autoridadTxt),
       ];
       if(hayAutoridad.get()==='Sí'){
-        bodyRows.push(peopleRow('Oficiales que atendieron', oficialesList.getAll()));
+        bodyRows.push(authoritiesRow('Autoridades que intervinieron', autoridadesList.getAll()));
       }
       bodyRows.push(
         labelRow('Tipo de incidente', tiposTxt),
@@ -446,21 +553,24 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
 
       const bodyTable = new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: bodyRows });
 
-      // ---- Photos section ----
-      const photoChildren = [];
-      if(photos.length){
+     // ---- Photos section ----
+     const photoChildren = [];
+      const photoEntries = photosList.getAll();
+      if(photoEntries.length){
         photoChildren.push(new Paragraph({ spacing:{before:200,after:100}, children:[ new TextRun({ text:'EVIDENCIA FOTOGRÁFICA', bold:true, size:20 }) ] }));
-        for(let i=0;i<photos.length;i+=2){
-          const rowImgs = [photos[i], photos[i+1]].filter(Boolean);
-          const runs = rowImgs.map(p => {
-            const targetW = 260;
-            const targetH = 195;
-            return new ImageRun({ data: p.bytes, type: 'jpg', transformation: { width: targetW, height: targetH } });
-          });
-          photoChildren.push(new Paragraph({ children: runs.flatMap((r,idx)=> idx>0 ? [new TextRun({text:'   '}), r] : [r]) }));
-        }
+        photoEntries.forEach(p => {
+          const displayHeight = 220;
+          const displayWidth = Math.round(p.w * (displayHeight / p.h));
+          photoChildren.push(new Paragraph({
+            spacing:{before:120},
+            children: [ new ImageRun({ data: p.bytes, type:'jpg', transformation:{ width: displayWidth, height: displayHeight } }) ]
+          }));
+          photoChildren.push(new Paragraph({
+            spacing:{after:160},
+            children: [ new TextRun({ text: p.caption || 'Sin descripción', italics:true, size:22 }) ]
+          }));
+        });
       }
-
       // ---- Footer meta ----
       const closing = [
         new Paragraph({ spacing:{before:300}, children:[ new TextRun({ text: 'Folio: ' + folio + '   ·   Generado: ' + now.toLocaleString('es-MX'), size:16, color:'666666' }) ] }),
@@ -492,4 +602,5 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
       return d.toLocaleDateString('es-MX', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
     }
   }
-})();
+}
+)();

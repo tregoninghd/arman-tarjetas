@@ -143,33 +143,22 @@
     </div>
   </div>
 
-  <!-- 05 Autoridades -->
-  <div class="section">
-    <div class="section-eyebrow"><span class="num">5</span>INTERVENCIÓN DE AUTORIDADES</div>
+<!-- 05 Autoridades -->
+<div class="section">
+  <div class="section-eyebrow"><span class="num">5</span>INTERVENCIÓN DE AUTORIDADES</div>
+  <div class="field">
+    <label>¿Hubo intervención policial y autoridades/Ambulancia y servicios de emergencia?</label>
+    <div class="chips" id="hayAutoridadChips"></div>
+  </div>
+  <div id="autoridadFields">
     <div class="field">
-      <label>¿Hubo intervención policial y autoridades/Ambulancia y servicios de emergencia?</label>
-      <div class="chips" id="hayAutoridadChips"></div>
-    </div>
-    <div id="autoridadFields">
-      <div class="row2">
-        <div class="field"><label>Corporación</label>
-          <select id="corporacion">
-            <option>Policía Municipal</option><option>Policía Estatal</option><option>Guardia Nacional</option><option>Ejercito o Marina</option><option>Personal de la Fiscalia</option><option>Policia de Investigaciones</option><option>Personal de Juzgados</option>
-            <option>Cruz Roja</option><option>Bomberos</option><option>Emergencias Médicas</option><option>Servicios Forenses</option><option>Personal de Rescate</option><option>Otro</option>
-          </select>
-        </div>
-        <div class="field"><label>Número de unidad / placas</label><input type="text" id="numUnidad" placeholder="Ej. STB J06"></div>
-      </div>
-      <div class="field">
-        <label>Oficiales / personal que atendió</label>
-        <div class="list-block">
-          <div id="listaOficiales"></div>
-          <div class="empty-hint" id="oficialesEmptyHint">Aún no agregas oficiales</div>
-          <button type="button" class="add-row-btn" id="addOficialBtn">+ Agregar oficial</button>
-        </div>
-      </div>
+      <label>Autoridades que intervinieron <span style="font-weight:400;color:#5a6472;">(agrega una tarjeta por cada corporación, y dentro sus elementos)</span></label>
+      <div id="listaAutoridades"></div>
+      <div class="empty-hint" id="autoridadesEmptyHint">Aún no agregas autoridades</div>
+      <button type="button" class="add-row-btn" id="addAutoridadBtn">+ Agregar autoridad</button>
     </div>
   </div>
+</div>
 
   <!-- 06 Antecedentes y hechos -->
   <div class="section">
