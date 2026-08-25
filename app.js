@@ -1,6 +1,6 @@
 (function(){
   const $ = id => document.getElementById(id);
-  const ACCESS_CODE = "1"; // <-- para cambiar el código, edita este valor
+  const ACCESS_CODE = "ARMAN"; // <-- para cambiar el código, edita este valor
 
   /* ---------- Gate ---------- */
   $('gateBtn').addEventListener('click', tryEnter);
