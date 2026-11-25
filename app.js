@@ -457,38 +457,38 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
       // ---- Header (letterhead) ----
       const logoBytes = base64ToBytes(window.__LOGO_B64__);
       const NOBORDER = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+      const BAR_GOLD = 'FFC000';   // color de la barra del header
       const headerTable = new Table({
         width: { size: 100, type: WidthType.PERCENTAGE },
         borders: { top:NOBORDER, bottom:NOBORDER, left:NOBORDER, right:NOBORDER, insideHorizontal:NOBORDER, insideVertical:NOBORDER },
         rows: [ new TableRow({ children: [
+          // Columna 1: logo
           new TableCell({
-            width: { size: 22, type: WidthType.PERCENTAGE },
+            width: { size: 16, type: WidthType.PERCENTAGE },
             verticalAlign: VerticalAlign.CENTER,
             children: [ new Paragraph({ children: [ new ImageRun({ data: logoBytes, type: 'png', transformation: { width: 85, height: 126 } }) ] }) ]
           }),
-          
+          // Columna 2: título + barra
           new TableCell({
-            width: { size: 56, type: WidthType.PERCENTAGE },
+            width: { size: 84, type: WidthType.PERCENTAGE },
             verticalAlign: VerticalAlign.CENTER,
-            children: [ new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: 'ARMAN SEGURIDAD PRIVADA S.A DE C.V', bold: true, size: 26 }) ] }) ]
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 60 },
+                children: [ new TextRun({ text: 'ARMAN SEGURIDAD PRIVADA S.A DE C.V', bold: true, size: 28, font: 'Arial' }) ]
+              }),
+              new Paragraph({
+                border: { bottom: { color: BAR_GOLD, space: 1, style: BorderStyle.SINGLE, size: 36 } },
+                children: []
+              }),
+            ]
           }),
-
-          new TableCell({
-          width: { size: 22, type: WidthType.PERCENTAGE },
-          children: [ new Paragraph({ children: [] }) ]
-          }),
-
-
         ] }) ]
       });
       const headerChildren = [
         headerTable,
-        new Paragraph({
-          spacing: { before: 10 },
-          border: { bottom: { color: GOLD, space: 4, style: BorderStyle.SINGLE, size: 18 } },
-          spacing: { after: 220 },
-          children: []
-        }),
+        new Paragraph({ spacing: { after: 0 }, children: [ new TextRun({ text: '', size: 2 }) ] }),
       ];
 
       // ---- Footer ----
@@ -499,7 +499,7 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
         });
       }
       const footerChildren = [
-        new Paragraph({ border: { top: { color: GOLD, space: 4, style: BorderStyle.SINGLE, size: 16 } }, children: [] }),
+        new Paragraph({ border: { top: { color: BAR_GOLD, space: 4, style: BorderStyle.SINGLE, size: 36 } }, children: [] }),
         footerLine('AUTORIZACIÓN ESTATAL: DRSESSP / 653 / 2022'),
         footerLine('CALLE VENADO, SMZ 20, MZ 17, L 1 – 01. CANCÚN, QUINTANA ROO. CP: 77500'),
         footerLine('TELÉFONO: 998 89 23 533 / CORREO: armanss1510@gmail.com'),
@@ -592,6 +592,11 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
       ];
 
       const doc = new Document({
+        styles: {
+          default: {
+            document: { run: { font: 'Arial' } }
+          }
+        },
         sections: [{
           properties: { page: { margin: { top: 900, bottom: 900, left: 900, right: 900 } } },
           headers: { default: new Header({ children: headerChildren }) },
