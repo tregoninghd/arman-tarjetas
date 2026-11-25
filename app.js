@@ -101,6 +101,9 @@
     const evVideos = buildSingleChips('evVideosChips', ['Sí','No'], 'No', opt => opt==='Sí' ? 'ok' : '');
     const evFotos = buildSingleChips('evFotosChips', ['Sí','No'], 'No', opt => opt==='Sí' ? 'ok' : '');
     const evInformo = buildSingleChips('evInformoChips', ['Sí','No'], 'No', opt => opt==='Sí' ? 'ok' : '');
+    const evReportes = buildSingleChips('evReportesChips', ['Sí','No'], 'No', opt => opt==='Sí' ? 'ok' : '');
+    const evNotasVoz = buildSingleChips('evNotasVozChips', ['Sí','No'], 'No', opt => opt==='Sí' ? 'ok' : '');
+    const evBitacora = buildSingleChips('evBitacoraChips', ['Sí','No'], 'No', opt => opt==='Sí' ? 'ok' : '');
 
     $('hayResponsableChips').addEventListener('click', () => {
       $('responsableFields').style.display = hayResponsable.get()==='Sí' ? 'block' : 'none';
@@ -545,7 +548,16 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
         labelRow('Tipo de incidente', tiposTxt),
         labelRow('Antecedentes', $('antecedentes').value.trim() || 'Sin antecedentes reportados'),
         labelRow('Descripción del incidente', $('hechos').value.trim()),
-        labelRow('Evidencias', 'Videos: ' + evVideos.get() + '\nFotografías: ' + evFotos.get() + '\nSe informó a Administración/Cliente: ' + evInformo.get()),
+        labelRow('Evidencias', [
+          ['Videos', evVideos],
+          ['Fotografías', evFotos],
+          ['Testimonios', evInformo],
+          ['Reportes previos', evReportes],
+          ['Notas de voz', evNotasVoz],
+          ['Bitácora', evBitacora],
+        ].filter(([nombre, chip]) => chip.get() === 'Sí')
+         .map(([nombre]) => nombre)
+         .join('\n') || 'Sin evidencias'),
         labelRow('Acciones tomadas posteriores al evento', $('acciones').value.trim() || '—', {bullet:true}),
         labelRow('Valor aproximado de lo afectado', $('valorAfectado').value.trim() || 'No cuantificado'),
         labelRow('Recomendaciones', $('medidas').value.trim() || '—', {bullet:true}),
