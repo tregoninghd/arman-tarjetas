@@ -533,9 +533,9 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
       const bodyRows = [
         labelRow('Fecha y hora del incidente', fechaHoraTxt),
         labelRow('Lugar del incidente', $('lugarEspecifico').value.trim()),
-        labelRow('Persona(s) afectada(s)', $('personasAfectadas').value.trim()),
-        peopleRow('Personas que tuvieron conocimiento y/o estuvieron involucradas', personasList.getAll()),
         labelRow('Responsable del incidente', respTxt),
+        labelRow('Persona(s) o unidad(es) afectada(s)', $('personasAfectadas').value.trim()),
+        peopleRow('Personal operativo/administrativo a quien se le reportó', personasList.getAll()),
         labelRow('Intervención policial o ambulancia', autoridadTxt),
       ];
       if(hayAutoridad.get()==='Sí'){
@@ -546,9 +546,9 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
         labelRow('Antecedentes', $('antecedentes').value.trim() || 'Sin antecedentes reportados'),
         labelRow('Descripción del incidente', $('hechos').value.trim()),
         labelRow('Evidencias', 'Videos: ' + evVideos.get() + '\nFotografías: ' + evFotos.get() + '\nSe informó a Administración/Cliente: ' + evInformo.get()),
-        labelRow('Acciones tomadas', $('acciones').value.trim() || '—', {bullet:true}),
+        labelRow('Acciones tomadas posteriores al evento', $('acciones').value.trim() || '—', {bullet:true}),
         labelRow('Valor aproximado de lo afectado', $('valorAfectado').value.trim() || 'No cuantificado'),
-        labelRow('Medidas a tomar / seguimiento', $('medidas').value.trim() || '—', {bullet:true}),
+        labelRow('Recomendaciones', $('medidas').value.trim() || '—', {bullet:true}),
       );
 
       const bodyTable = new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: bodyRows });
@@ -584,7 +584,10 @@ const photosList = makePhotoListManager('listaFotos', 'fotosEmptyHint', 'addFoto
           properties: { page: { margin: { top: 900, bottom: 900, left: 900, right: 900 } } },
           headers: { default: new Header({ children: headerChildren }) },
           footers: { default: new Footer({ children: footerChildren }) },
-          children: [ titleTable, new Paragraph({text:'', spacing:{after:120}}), bodyTable, ...photoChildren, ...closing ]
+          children: [
+            new Paragraph({ alignment: AlignmentType.CENTER, spacing:{after:160}, children:[ new TextRun({ text:'TARJETA INFORMATIVA', bold:true, size:28 }) ] }),
+            titleTable, new Paragraph({text:'', spacing:{after:120}}), bodyTable, ...photoChildren, ...closing
+          ]
         }]
       });
 
